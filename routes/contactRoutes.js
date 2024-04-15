@@ -5,7 +5,7 @@ const {
   getAllContacts,
   updateContact,
   deleteContact,
-} = require("../controllers/userController");
+} = require("../controllers/contactController");
 
 router.route("/").get(auth, getAllContacts);
 router.route("/register").put(auth, updateContact);
