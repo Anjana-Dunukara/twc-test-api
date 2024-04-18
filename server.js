@@ -18,9 +18,14 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/contacts", contactRoutes);
 
-mongoose.connect(process.env.MONGODB_URL, () => {
-  console.log("Successfully connected to database.");
-});
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    console.log("Successfully connected to database.");
+  })
+  .catch((error) => {
+    console.error("Error connecting to database:", error);
+  });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);

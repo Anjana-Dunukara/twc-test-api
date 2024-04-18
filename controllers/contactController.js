@@ -15,6 +15,57 @@ exports.getAllContacts = async (req, res) => {
   }
 };
 
+exports.getContactById = async (req, res) => {
+  try {
+    const contact = await Contact.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+
+    if (!contact) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Contact not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        contact,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "failed",
+      error: error.message,
+    });
+  }
+};
+
+exports.createContact = async (req, res) => {
+  try {
+    const newContact = new Contact({
+      ...req.body,
+      owner: req.user._id,
+    });
+
+    await newContact.save();
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        contact: newContact,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "failed",
+      error: error.message,
+    });
+  }
+};
+
 exports.updateContact = async (req, res) => {
   const contactUpadate = Object.keys(req.body);
   const allowedUpdates = ["fullName", "gender", "email", "phone"];
@@ -51,7 +102,7 @@ exports.updateContact = async (req, res) => {
 
 exports.deleteContact = async (req, res) => {
   try {
-    const task = await Task.findOneAndDelete({
+    const task = await Contact.findOneAndDelete({
       _id: req.params.id,
       owner: req.user._id,
     });
